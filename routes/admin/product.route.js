@@ -41,6 +41,7 @@ route.get("/edit/:id", controller.edit);
 route.patch(
         "/edit/:id",
         upload.single("thumbnail"),
+        uploadCloud.uploadSingle,
         validates.createPost,
         controller.editPatch
 )
