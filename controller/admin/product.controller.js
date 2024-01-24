@@ -143,7 +143,6 @@ module.exports.deleteItem = async (req, res) => {
 }
 
 //[GET] /admin/products/create
-
 module.exports.create = async (req, res) => {
     res.render(`${configSystem.prefixAdmin}/pages/products/create.pug`,{
         pageTitle : "Thêm mới sản phẩm"
@@ -164,10 +163,11 @@ module.exports.createPost = async (req, res) => {
     else {
         req.body.position = parseInt(req.body.position);
     }
-
-    if(req.file && req.file.filename) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
+    // console.log(req.file);
+    // console.log(req.body);
+    // if(req.file && req.file.filename) {
+    //     req.body.thumbnail = `/uploads/${req.file.filename}`;
+    // }
 
     const product = new Product(req.body);
     await product.save();
