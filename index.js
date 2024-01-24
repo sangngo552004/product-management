@@ -21,12 +21,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(methodOverride('_method'))
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 
 app.locals.prefixAdmin = configSystem.prefixAdmin;
 
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 
 // flash
 app.use(cookieParser('KJJSLKASASASA'));
