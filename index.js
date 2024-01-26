@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const path = require("path");
 
 dotenv.config();
 
@@ -27,6 +28,9 @@ app.set("view engine", "pug");
 app.locals.prefixAdmin = configSystem.prefixAdmin;
 
 app.use(express.static(`${__dirname}/public`));
+
+/* New Route to the TinyMCE Node module */
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 // flash
 app.use(cookieParser('KJJSLKASASASA'));
