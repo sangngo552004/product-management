@@ -1,8 +1,10 @@
 const configSystem = require("../../config/system");
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model");
 const filterStatusHelpers = require("../../helpers/filter-status.helpers");
 const systemConfig = require("../../config/system");
 const paginationHelpers = require("../../helpers/pagination.helper");
+const createTreeHelper = require("../../helpers/create-tree.helpers");
 
 
 
@@ -152,8 +154,13 @@ module.exports.deleteItem = async (req, res) => {
 
 //[GET] /admin/products/create
 module.exports.create = async (req, res) => {
+    const records = await ProductCategory.find({
+        deleted : false
+    })
+    const newRecords = createTreeHelper(records, parentID = "");
     res.render(`${configSystem.prefixAdmin}/pages/products/create.pug`,{
-        pageTitle : "Thêm mới sản phẩm"
+        pageTitle : "Thêm mới sản phẩm",
+        records : newRecords
     });
 }
 
@@ -194,10 +201,16 @@ module.exports.edit = async (req, res) => {
             _id : id,
             deleted : false
         })
-        console.log(product);
+        
+        const records = await ProductCategory.find({
+            deleted: false,
+          });
+      
+          const newRecords = createTreeHelper(records);
         res.render(`${systemConfig.prefixAdmin}/pages/products/edit.pug`,{
             pageTitle : "Chỉnh sửa sản phẩm",
-            product : product
+            product : product,
+            records : newRecords
         })
     }
     catch (error) {
