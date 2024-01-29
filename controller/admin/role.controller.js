@@ -29,3 +29,37 @@ module.exports.createPost = async (req, res) => {
 
     res.redirect(`/${configSystem.prefixAdmin}/roles`);
 }
+
+//[GET] admin/roles/edit/:id
+module.exports.edit = async (req, res) => {
+    try {
+        const data = await Role.findOne({
+            _id : req.params.id,
+            deleted : false
+        })
+        const PATH_ADMIN = configSystem.prefixAdmin;
+        res.render(`${PATH_ADMIN}/pages/roles/edit.pug`, {
+            pageTitle : "Chỉnh sửa nhóm quyền",
+            data : data
+        });
+    }
+    catch(err) {
+        res.redirect(`/${configSystem.prefixAdmin}/roles`);
+    }
+}
+
+module.exports.editPatch = async (req, res) => {
+    try {
+        await Role.updateOne({
+            _id : req.params.id,
+            deleted : false
+        }, req.body);
+    
+        req.flash("success", "Chỉnh sửa nhóm quyền thành công");
+    
+        res.redirect(`back`);
+    }
+    catch(err) {
+        res.redirect(`/${configSystem.prefixAdmin}/roles`);
+    }
+}
