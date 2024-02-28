@@ -21,10 +21,8 @@ const port = process.env.PORT;
 // SocketIO
 const server = http.createServer(app);
 const io = new Server(server);
+global._io = io;
 
-io.on("connection", (socket) => {
-  console.log("Kết nối thành công!", socket.id)
-});
 // End SocketIO
 
 // parse application/x-www-form-urlencoded
