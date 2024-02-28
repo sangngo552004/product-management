@@ -10,12 +10,22 @@ const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require("path");
+const http = require('http');
+const { Server } = require("socket.io");
 
 dotenv.config();
 
 database.connect();
 const app = express();
 const port = process.env.PORT;
+// SocketIO
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+  console.log("Kết nối thành công!", socket.id)
+});
+// End SocketIO
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -43,6 +53,6 @@ routesAdmin(app);
 
 //nhúng từ file route client
 routesClient(app);
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });
