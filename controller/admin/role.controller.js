@@ -47,7 +47,7 @@ module.exports.edit = async (req, res) => {
         res.redirect(`/${configSystem.prefixAdmin}/roles`);
     }
 }
-
+//[PATCH] admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
         await Role.updateOne({
@@ -62,4 +62,34 @@ module.exports.editPatch = async (req, res) => {
     catch(err) {
         res.redirect(`/${configSystem.prefixAdmin}/roles`);
     }
+}
+
+//[GET] admin/roles/permissions
+module.exports.permissions = async (req, res) => {
+    const records = await Role.find({
+        deleted : false
+    })
+
+    res.render("admin/pages/roles/permissions", {
+        pageTitle : "Phân quyền",
+        records : records
+    })
+}
+
+//[PATCH] admin/roles/permissions
+module.exports.permissionsPatch = async (req, res) => {
+    const roles = JSON.parse(req.body.roles);
+    try{
+        for(const item of roles) {
+            await Role.updateOne({
+                _id : item.id,
+            },{
+                permissions : item.permissions
+            });
+        }
+        req.flash("success", "Cập nhật phân quyền thành công!");
+    }catch(error) {
+        req.flash("error", "Cập nhật phân quyền không thành công!")
+    }
+    res.redirect("back");
 }

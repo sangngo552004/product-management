@@ -89,7 +89,6 @@ if (buttonChangeStatus.length > 0) {
 
 //checkbox multi
 const checkBoxMulti = document.querySelector(".check-multi");
-
 if (checkBoxMulti) {
     const checkBoxAll = checkBoxMulti.querySelector('input[name="checkAll"]');
     const checkBoxID = checkBoxMulti.querySelectorAll('input[name="checkID"]');
@@ -266,3 +265,55 @@ if (sort) {
 
 }
 //end sort
+
+//permission
+const tablePermissions = document.querySelector("[table-permissions]");
+if (tablePermissions) {
+    //submit Data
+    const buttonSubmit = document.querySelector("[button-submit");
+    const roles = [];
+    buttonSubmit.addEventListener("click", () => {
+        const rows = tablePermissions.querySelectorAll("[data-name]");
+        rows.forEach(row => {
+            const name = row.getAttribute("data-name");
+            const inputs = row.querySelectorAll("input");
+            if (name == "id") {
+                inputs.forEach(input => {
+                    const info = {
+                        id : input.value,   
+                        permissions : []
+                    }
+                    roles.push(info);
+                })
+            }
+            else {
+                inputs.forEach((input, index) => {
+                    if (input.checked == true){
+                        roles[index].permissions.push(name);
+                    }
+                })
+            }
+        })
+
+        const formChangePermissions = document.querySelector("[form-change-permissions]");
+        const inputRoles = formChangePermissions.querySelector("input[name='roles']");
+        inputRoles.value = JSON.stringify(roles);
+        formChangePermissions.submit();
+    })
+    //data default
+    const divDataRecords = document.querySelector("[data-records");
+    if (divDataRecords) {
+        const records = JSON.parse(divDataRecords.getAttribute("data-records"));
+        records.forEach((record, index) => {
+            const permissions = record.permissions;
+
+            permissions.forEach(permission => {
+                const row = tablePermissions.querySelector(`[data-name="${permission}"]`);
+                const input = row.querySelectorAll("input")[index];
+                input.checked = true;
+            })
+        })
+    }
+}
+
+//end permission
