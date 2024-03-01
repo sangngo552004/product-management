@@ -15,3 +15,16 @@ header.header
               a(href="/products") Sản phẩm
             li 
               a(href="/chat") chat
+            if (user) 
+              li
+                a(href="/user/logout") Đăng xuất
+              li 
+                a(href="/chat") chat
+            else
+              li 
+                a(href="/user/login") Đăng nhập
+              li 
+                a(href="/user/register") Đăng ký
+
+
+            
