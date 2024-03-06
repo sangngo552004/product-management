@@ -13,13 +13,11 @@ header.header
               a(href="/") Trang chủ
             li
               a(href="/products") Sản phẩm
-            li 
-              a(href="/chat") chat
-            if (user) 
+            if(user) 
+              li 
+                a(href="/chat") chat 
               li
                 a(href="/user/logout") Đăng xuất
-              li 
-                a(href="/chat") chat
             else
               li 
                 a(href="/user/login") Đăng nhập
