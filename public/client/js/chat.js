@@ -9,6 +9,7 @@ if (formSendData) {
         if (content) {
             socket.emit("CLIENT_SEND_MESSAGE", content);
             inputContent.value = "";
+            socket.emit("CLIENT_SEND_TYPING", "hidden");
         }
     })
 
@@ -19,6 +20,7 @@ if (formSendData) {
 socket.on("SEVER_SEND_MESSAGE", (data) => {
     const body = document.querySelector(".chat .inner-body");
     const myId = document.querySelector("[my-id]").getAttribute("my-id");
+    const elementListTyping = body.querySelector(".inner-list-typing");
 
     const div = document.createElement("div");
     let htmlFullName = "";
@@ -35,7 +37,7 @@ socket.on("SEVER_SEND_MESSAGE", (data) => {
     ${htmlFullName}
     <div class="inner-content">${data.content}</div>
   `
-    body.appendChild(div);
+    body.insertBefore(div, elementListTyping);
     body.scrollTop = body.scrollHeight;
 
 });
@@ -66,7 +68,51 @@ if (buttonIcon) {
     emojiPicker.addEventListener("emoji-click", event => {
         inputContent.value = inputContent.value + event.detail.unicode;
     });
+    //Show typing
+    var timeOut;
+    inputContent.addEventListener("keyup", () => {
+        socket.emit("CLIENT_SEND_TYPING", "show");
 
+        clearTimeout(timeOut);
+
+        timeOut = setTimeout(() => {
+            socket.emit("CLIENT_SEND_TYPING", "hidden");
+        }, 3000);
+    })
 }
 
 //end emoji-picker
+
+//SERVER_RETURN_TYPING
+const elementListTyping = document.querySelector(".chat .inner-body .inner-list-typing");
+
+socket.on("SERVER_RETURN_TYPING", (data) => {
+    if(data.type == "show") {
+        const existTyping = elementListTyping.querySelector(`.box-typing[user-id="${data.userId}"]`);
+
+        if(!existTyping) {
+            const typingElement = document.createElement("div");
+            typingElement.classList.add("box-typing");
+            typingElement.setAttribute("user-id",data.userId);
+            typingElement.innerHTML = `
+                <div class="inner-name">${data.fullName}</div>
+                <div class="inner-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+          `;
+            elementListTyping.appendChild(typingElement);
+        }
+    }
+    else {
+        const removeTyping = elementListTyping.querySelector(`.box-typing[user-id="${data.userId}"]`);
+
+        if(removeTyping) {
+            elementListTyping.removeChild(removeTyping);
+        }
+    }
+    
+    
+})
+//END SEVER_RETURN_TYPING
