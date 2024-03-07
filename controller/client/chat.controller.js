@@ -1,35 +1,11 @@
 const User = require("../../models/user.model");
 const Chat = require("../../models/chat.model");
+const chatSocketIO = require("../../sockets/client/chat.socket");
 //[GET] /chat
 module.exports.index = async (req, res) => {
-  const userId = res.locals.user.id;
-  const fullName = res.locals.user.fullName;
 
     // SocketIO
-  _io.once("connection",  (socket) => {
-    socket.on("CLIENT_SEND_MESSAGE", async (content) => {
-      const chat = new Chat({
-        content : content,
-        user_id : res.locals.user.id
-      })
-      await chat.save();
-
-      //trả data ra giao diện realtime
-      _io.emit("SEVER_SEND_MESSAGE", {
-        userId : userId,
-        fullName : fullName,
-        content : content
-      });
-    });
-    //typing
-    socket.on("CLIENT_SEND_TYPING", (type) => {
-      socket.broadcast.emit("SERVER_RETURN_TYPING", {
-        userId : userId,
-        fullName : fullName,
-        type: type
-      })
-    })
-  });
+  chatSocketIO(res);
   // End SocketIO
 
   //data từ database
