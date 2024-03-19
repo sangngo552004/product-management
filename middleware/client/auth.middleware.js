@@ -12,11 +12,13 @@ module.exports.authRequire = async (req, res, next) => {
             tokenUser : req.cookies.tokenUser,
             deleted: false,
             status : "active"
-        })
+        }).select("-password");
 
         if (!user) {
             res.redirect(`/user/login`);
             return;
+        }else {
+            res.locals.infoUser = user;
         }
         next();
     }catch(error) {
