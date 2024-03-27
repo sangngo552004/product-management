@@ -3,49 +3,91 @@ const Role = require("../../models/role.model");
 
 //[GET] admin/roles/
 module.exports.index = async (req, res) => {
-    const records = await Role.find({
-        deleted : false
-    })
-    const PATH_ADMIN = configSystem.prefixAdmin;
-    res.render(`${PATH_ADMIN}/pages/roles/index.pug`, {
-        pageTitle : "Trang nhóm quyền",
-        records : records
-    });
+    if(res.locals.role.permissions.includes("roles_view"))
+    {
+        const records = await Role.find({
+            deleted : false
+        })
+        const PATH_ADMIN = configSystem.prefixAdmin;
+        res.render(`${PATH_ADMIN}/pages/roles/index.pug`, {
+            pageTitle : "Trang nhóm quyền",
+            records : records
+        });
+    }
+    else
+    {
+        res.redirect(`/${configSystem.prefixAdmin}/dashboard`);
+    }
+    
 }
 //[GET] admin/roles/create
 module.exports.create = async (req, res) => {
-    const PATH_ADMIN = configSystem.prefixAdmin;
-    res.render(`${PATH_ADMIN}/pages/roles/create.pug`, {
-        pageTitle : "Thêm mới nhóm quyền",
-    });
+    if(res.locals.role.permissions.includes("roles_create"))
+    {
+        const PATH_ADMIN = configSystem.prefixAdmin;
+        res.render(`${PATH_ADMIN}/pages/roles/create.pug`, {
+            pageTitle : "Thêm mới nhóm quyền",
+        });
+    }
+    else if (res.locals.role.permissions.includes("roles_view"))
+    {
+        req.flash("error","Bạn không có quyền thêm mới!");
+        res.redirect(`/${configSystem.prefixAdmin}/roles`);
+    }
+    else
+    {
+        res.redirect(`/${configSystem.prefixAdmin}/dashboard`);
+    }
 }
 
 //[POST] admin/roles/create
 module.exports.createPost = async (req, res) => {
-    const records = new Role(req.body);
-    await records.save();
+    if(res.locals.role.permissions.includes("roles_create"))
+    {
+        const records = new Role(req.body);
+        await records.save();
 
-    req.flash("success", "Thêm mới nhóm quyền thành công");
+        req.flash("success", "Thêm mới nhóm quyền thành công");
 
-    res.redirect(`/${configSystem.prefixAdmin}/roles`);
+        res.redirect(`/${configSystem.prefixAdmin}/roles`);
+    }
+    else
+    {
+        res.send("403");
+    }
+    
 }
 
 //[GET] admin/roles/edit/:id
 module.exports.edit = async (req, res) => {
-    try {
-        const data = await Role.findOne({
-            _id : req.params.id,
-            deleted : false
-        })
-        const PATH_ADMIN = configSystem.prefixAdmin;
-        res.render(`${PATH_ADMIN}/pages/roles/edit.pug`, {
-            pageTitle : "Chỉnh sửa nhóm quyền",
-            data : data
-        });
+    if(res.locals.role.permissions.includes("roles_edit"))
+    {
+        try {
+            const data = await Role.findOne({
+                _id : req.params.id,
+                deleted : false
+            })
+            const PATH_ADMIN = configSystem.prefixAdmin;
+            res.render(`${PATH_ADMIN}/pages/roles/edit.pug`, {
+                pageTitle : "Chỉnh sửa nhóm quyền",
+                data : data
+            });
+        }
+        catch(err) {
+            res.redirect(`/${configSystem.prefixAdmin}/roles`);
+        }
     }
-    catch(err) {
+    else if (res.locals.role.permissions.includes("roles_view"))
+    {
+        req.flash("error","Bạn không có quyền chỉnh sửa!");
         res.redirect(`/${configSystem.prefixAdmin}/roles`);
     }
+    else
+    {
+        res.redirect(`/${configSystem.prefixAdmin}/dashboard`);
+    }
+    
+    
 }
 //[PATCH] admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
@@ -66,14 +108,28 @@ module.exports.editPatch = async (req, res) => {
 
 //[GET] admin/roles/permissions
 module.exports.permissions = async (req, res) => {
-    const records = await Role.find({
-        deleted : false
-    })
-
-    res.render("admin/pages/roles/permissions", {
-        pageTitle : "Phân quyền",
-        records : records
-    })
+    if(res.locals.role.permissions.includes("roles_permissions"))
+    {
+        const records = await Role.find({
+            deleted : false
+        })
+    
+        res.render("admin/pages/roles/permissions", {
+            pageTitle : "Phân quyền",
+            records : records
+        })
+    }
+    else if (res.locals.role.permissions.includes("roles_view"))
+    {
+        req.flash("error","Bạn không có quyền chỉnh sửa!");
+        res.redirect(`/${configSystem.prefixAdmin}/roles`);
+    }
+    else
+    {
+        res.redirect(`/${configSystem.prefixAdmin}/dashboard`);
+    }
+    
+    
 }
 
 //[PATCH] admin/roles/permissions

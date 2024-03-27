@@ -8,6 +8,7 @@ include ../../mixins/sort.pug
 
 block main
   +alert-success(5000)
+  +alert-error(5000)
 
   h1(class="mb-4") #{pageTitle}
 
@@ -56,12 +57,14 @@ block main
     .card-body
       .row
         .col-8
-          +form-change-multi(`/${prefixAdmin}/products/change-multi?_method=PATCH`)
+          if(role.permissions.includes("products_edit"))
+            +form-change-multi(`/${prefixAdmin}/products/change-multi?_method=PATCH`)
         .col-4.text-right
-          a(
-            href=`/${prefixAdmin}/products/create`
-            class="btn btn-outline-success"
-          ) + Thêm mới
+          if(role.permissions.includes("products_create"))
+            a(
+              href=`/${prefixAdmin}/products/create`
+              class="btn btn-outline-success"
+            ) + Thêm mới
           
       table.table.table-hover.table-sm.check-multi
         thead
@@ -125,15 +128,17 @@ block main
                   href=`/${prefixAdmin}/products/detail/${item.id}`
                   class="btn btn-secondary btn-sm"
                 ) Chi tiết
-                a(
-                  href=`/${prefixAdmin}/products/edit/${item.id}`
-                  class="btn btn-warning btn-sm"
-                ) Sửa
-                button(
-                  class="btn btn-danger btn-sm ml-1"
-                  data-id = item.id
-                  button-delete
-                ) Xóa
+                if(role.permissions.includes("products_edit"))
+                  a(
+                    href=`/${prefixAdmin}/products/edit/${item.id}`
+                    class="btn btn-warning btn-sm"
+                  ) Sửa
+                if(role.permissions.includes("products_delete"))
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                    data-id = item.id
+                    button-delete
+                  ) Xóa
     +pagination(pagination)
     form(
       action
