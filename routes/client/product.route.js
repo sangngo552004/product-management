@@ -11,4 +11,6 @@ route.get(
     controller.category
 )
 
+route.get("/detail/:slugProduct",controller.detail);
+
 module.exports = route;
