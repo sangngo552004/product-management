@@ -7,8 +7,8 @@ const controller = require("../../controller/client/product.controller");
 route.get("/", controller.index);
 
 route.get(
-    "/:slug",
-    controller.detail
+    "/:slugCategory",
+    controller.category
 )
 
 module.exports = route;
