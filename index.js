@@ -10,6 +10,7 @@ const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require("path");
+const moment = require("moment");
 const http = require('http');
 const { Server } = require("socket.io");
 
@@ -32,7 +33,8 @@ app.use(methodOverride('_method'))
 
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
-
+//app local variables
+app.locals.moment = moment;
 app.locals.prefixAdmin = configSystem.prefixAdmin;
 
 app.use(express.static(`${__dirname}/public`));
