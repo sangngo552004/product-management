@@ -6,9 +6,13 @@ const userMiddleware = require("../../middleware/client/user.middleware");
 const authMiddleware = require("../../middleware/client/auth.middleware");
 const usersRoutes = require("./users.route");
 const roomsChatRoutes = require("./rooms-chat.route");
+const categoryMiddleware = require("../../middleware/client/category.middleware");
+
 
 module.exports = (app) => {
     app.use(userMiddleware.infoUser);
+
+    app.use(categoryMiddleware.category);
 
     app.use("/", homeRoutes);
 
