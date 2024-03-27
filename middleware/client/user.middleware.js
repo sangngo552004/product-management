@@ -1,4 +1,5 @@
 const User = require("../../models/user.model");
+const Cart = require("../../models/cart.model");
 
 module.exports.infoUser = async (req, res, next) => {
     if (req.cookies.tokenUser) {
@@ -7,6 +8,10 @@ module.exports.infoUser = async (req, res, next) => {
         }).select("-password");
 
         if (user) {
+            const cart = await Cart.findOne({
+                userId : user.id
+            });
+            res.locals.cart = cart;
             res.locals.user = user;
         }
     }

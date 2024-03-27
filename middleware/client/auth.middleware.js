@@ -1,5 +1,6 @@
 const configSystem = require("../../config/system");
 const User = require("../../models/user.model");
+const Cart = require("../../models/cart.model");
 
 module.exports.authRequire = async (req, res, next) => {
     if (!req.cookies.tokenUser) {
@@ -18,6 +19,11 @@ module.exports.authRequire = async (req, res, next) => {
             res.redirect(`/user/login`);
             return;
         }else {
+            const cart = await Cart.findOne({
+                userId : user.id
+            });
+            res.locals.cart = cart;
+            console.log(cart);
             res.locals.infoUser = user;
         }
         next();
