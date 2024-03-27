@@ -1,7 +1,7 @@
 const md5 = require("md5");
 const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
-
+const Cart = require("../../models/cart.model");
 const generateHelper = require("../../helpers/generate.helper");
 const sendMailHelper = require("../../helpers/send-mail.helper");
 
@@ -32,7 +32,11 @@ module.exports.registerPost = async (req, res) => {
     }
     const user = new User(infoUser);
     await user.save();
-
+    const cart = new Cart({
+      userId : user.id,
+      products : []
+    });
+    await cart.save();
     res.cookie("tokenUser", infoUser.tokenUser);
     res.redirect("/");
 }
