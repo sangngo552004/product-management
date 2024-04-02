@@ -10,11 +10,14 @@ const searchRoutes = require("./search.route");
 const cartRoutes = require("./cart.route");
 const categoryMiddleware = require("../../middleware/client/category.middleware");
 const checkoutRoutes = require("./checkout.route");
+const settingMiddleware = require("../../middleware/client/settings-general.middleware");
 
 module.exports = (app) => {
     app.use(userMiddleware.infoUser);
 
     app.use(categoryMiddleware.category);
+
+    app.use(settingMiddleware.settingsGeneral);
 
     app.use("/", homeRoutes);
 
